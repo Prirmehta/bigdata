@@ -56,4 +56,35 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+
+// ✅ Mark student as selected
+router.put("/select/:id", async (req, res) => {
+  try {
+    const { selectedCompany } = req.body;
+    console.log("➡️ Update request received for:", req.params.id, "with:", selectedCompany);
+
+    if (!selectedCompany) {
+      return res.status(400).json({ message: "Company name required" });
+    }
+
+    const updatedStudent = await Student.findByIdAndUpdate(
+      req.params.id,
+      { selectedCompany },
+      { new: true }
+    );
+
+    console.log("✅ Updated student:", updatedStudent);
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json(updatedStudent);
+  } catch (err) {
+    console.error("❌ Error saving selection:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 export default router;
